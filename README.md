@@ -1,4 +1,4 @@
-# CNNpred
+# CNNpred-Keras
 Implementation of the paper "CNNpred: CNN-based stock market prediction using a diverse set of variables" using Keras and Tensorflow
 https://www.sciencedirect.com/science/article/abs/pii/S0957417419301915
 
