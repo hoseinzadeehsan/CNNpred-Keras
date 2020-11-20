@@ -13,41 +13,6 @@ import tensorflow as tf
 import tensorflow.keras as keras
 
 
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.models import Model
-from tensorflow.keras.layers import Input
-# from keras.layers import Dense
-# from keras.layers import Flatten
-# from keras.layers.convolutional import Conv2D
-# from keras.layers.pooling import MaxPooling2D
-
-
-
-
-class CustomModel(keras.Model):
-    def train_step(self, data):
-        # Unpack the data. Its structure depends on your model and
-        # on what you pass to `fit()`.
-        x, y = data
-
-        with tf.GradientTape() as tape:
-            y_pred = self(x, training=True)  # Forward pass
-            # Compute the loss value
-            # (the loss function is configured in `compile()`)
-            loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
-
-        # Compute gradients
-        trainable_vars = self.trainable_variables
-        gradients = tape.gradient(loss, trainable_vars)
-        # Update weights
-        self.optimizer.apply_gradients(zip(gradients, trainable_vars))
-        # Update metrics (includes the metric that tracks the loss)
-        self.compiled_metrics.update_state(y, y_pred)
-        # Return a dict mapping metric names to current value
-        return {m.name: m.result() for m in self.metrics}
-
-
-
 
 def f1(y_true, y_pred):
     def recall(y_true, y_pred):
@@ -89,7 +54,6 @@ def f1(y_true, y_pred):
 def load_data(file_fir):
     try:
         df_raw = pd.read_csv(file_fir, index_col='Date') # parse_dates=['Date'])
-        # df_raw.index = df_raw['Date']
     except IOError:
         print("IO ERROR")
     return df_raw
@@ -126,7 +90,6 @@ def costruct_data_warehouse(ROOT_PATH, file_names):
         data = data.fillna(0)
         data['target'] = target
         target = data['target']
-        # del data['Date']
         # data['Date'] = data['Date'].apply(lambda x: x.weekday())
         del data['target']
 
@@ -248,15 +211,10 @@ def train(data_warehouse, i):
         best_model = callbacks.ModelCheckpoint(filepath, monitor='val_f1', verbose=0, save_best_only=True,
                                                save_weights_only=False, mode='max', period=1)
 
-        # for epoch in range(epochs):
-        #
-        #     if epoch % 4 == 0:
-        #         pass
 
         model.fit(cnn_train_data, cnn_train_target, epochs=epochs, batch_size=128, verbose=1,
                         validation_data=(cnn_valid_data, cnn_valid_target), callbacks=[best_model])
     model = load_model(filepath, custom_objects={'f1': f1})
-    # print model.evaluate(cnn_valid_data, cnn_valid_target)
 
     return model, seq_len
 
