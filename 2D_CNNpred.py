@@ -274,7 +274,7 @@ moving_average_day = 0
 number_of_stocks = 0
 number_feature = 0
 samples_in_each_stock = 0
-number_filter = [8, 8, 8, 8, 32, 128, 128]
+number_filter = [8, 8, 8]
 predict_day = 1
 
 cnn_train_data, cnn_train_target, cnn_test_data, cnn_test_target, cnn_valid_data, cnn_valid_target = ([] for i in
